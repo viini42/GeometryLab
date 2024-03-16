@@ -1,6 +1,7 @@
 {
   "dependencies": [
-    "gtest"
+    "gtest",
+    "sfml"
   ],
   "name": "app-name",
   "version": "0.1"
