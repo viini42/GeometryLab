@@ -6,7 +6,7 @@
 class Point
 {
 public:
-  Point(f64 x, f64 y);
+  constexpr Point(f64 x, f64 y) : m_x(x), m_y(y) {}
 
   [[nodiscard]] auto X() const { return m_x; }
   [[nodiscard]] auto Y() const { return m_y; }

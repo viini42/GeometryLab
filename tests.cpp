@@ -41,17 +41,15 @@ TEST(WorldConverter, ConvertToScreen)
 {
   const World world{ 800, 600 };
   {
-    constexpr f64 world_x = 0.41;
-    constexpr f64 world_y = 0.3675;
-    const auto screen_coords = world.ConvertToScreen(world_x, world_y);
+    constexpr Point world_xy{ 0.41, 0.3675 };
+    const auto screen_coords = world.ConvertToScreen(world_xy);
     ASSERT_EQ(screen_coords.x, 328);
     ASSERT_EQ(screen_coords.y, 306);
   }
 
   {
-    constexpr f64 world_x = 0.30;
-    constexpr f64 world_y = 0.4875;
-    const auto screen_coords = world.ConvertToScreen(world_x, world_y);
+    constexpr Point world_xy{ 0.30, 0.4875 };
+    const auto screen_coords = world.ConvertToScreen(world_xy);
     ASSERT_EQ(screen_coords.x, 240);
     ASSERT_EQ(screen_coords.y, 210);
   }
@@ -62,9 +60,8 @@ TEST(WorldConverter, MoveLeft)
   World world{ 800, 600 };
   world.MoveHorizontally(0.5);
   {
-    constexpr f64 world_x = 0.91;
-    constexpr f64 world_y = 0.3675;
-    const auto screen_coords = world.ConvertToScreen(world_x, world_y);
+    constexpr Point world_xy{ 0.91, 0.3675 };
+    const auto screen_coords = world.ConvertToScreen(world_xy);
     ASSERT_EQ(screen_coords.x, 328);
     ASSERT_EQ(screen_coords.y, 306);
   }
