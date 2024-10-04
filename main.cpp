@@ -1,5 +1,5 @@
-#include "object_drawer.hpp"
-#include "world_converter.hpp"
+#include "draw/object_drawer.hpp"
+#include "geometry/world_converter.hpp"
 
 #include <SFML/Graphics.hpp>
 #include <cmath>

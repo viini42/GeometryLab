@@ -83,22 +83,31 @@ endif()
 
 find_package(SFML COMPONENTS system window graphics CONFIG REQUIRED)
 
-add_library(DrawerLib STATIC world_converter.hpp world_converter.cpp
-    point.cpp
-    point.hpp
-    line.cpp
-    line.hpp
-    object_drawer.cpp
-    object_drawer.hpp)
+add_library(DrawerLib STATIC
+    geometry/world_converter.hpp
+    geometry/world_converter.cpp
+    geometry/point.cpp
+    geometry/point.hpp
+    geometry/line.cpp
+    geometry/line.hpp
+    draw/object_drawer.cpp
+    draw/object_drawer.hpp)
+target_include_directories(DrawerLib PUBLIC ${CMAKE_SOURCE_DIR})
 target_link_libraries(DrawerLib PUBLIC sfml-system sfml-network sfml-graphics sfml-window)
+if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+  set_target_properties(DrawerLib PROPERTIES MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif()
 
 add_executable(Drawer main.cpp)
 target_link_libraries(Drawer PRIVATE ProjectSetup DrawerLib)
-
+if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+  target_compile_definitions(Drawer PRIVATE SFML_STATIC)
+  set_target_properties(Drawer PROPERTIES MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif()
 enable_testing()
 
 find_package(GTest CONFIG REQUIRED)
-add_executable(DrawerTests tests.cpp)
+add_executable(DrawerTests tests/tests.cpp)
 target_link_libraries(DrawerTests PRIVATE DrawerLib GTest::gtest GTest::gtest_main GTest::gmock GTest::gmock_main)
 
 #add_test(AllTestsInMain main)
