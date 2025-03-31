@@ -8,8 +8,9 @@
 void ObjectDrawer::DrawPoint(sf::RenderTarget& renderer, const World& world, const Point& pt)
 {
   auto [screen_x, screen_y] = world.ConvertToScreen(pt);
-  sf::CircleShape circle{ 2.0f, 4 };
-  circle.setPosition(screen_x, screen_y);
+  constexpr auto radius = 2.0f;
+  sf::CircleShape circle{ radius };
+  circle.setPosition(screen_x - radius, screen_y - radius);
   renderer.draw(circle);
 }
 

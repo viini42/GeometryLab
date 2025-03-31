@@ -57,10 +57,11 @@ void World::ZoomIn()
 
 sf::Vector2<f64> World::ConvertToWorld(i32 screenX, i32 screenY) const
 {
-  const f64 screen_x = screenX;
-  const f64 screen_y = m_window_height - screenY;
-  const f64 aspect_ratio = m_window_height / static_cast<f64>(m_window_width);
-  const f64 world_x = screen_x / m_window_width;
-  const f64 world_y = screen_y / static_cast<f64>(m_window_height) * aspect_ratio;
-  return { world_x + m_limits.start, world_y + m_limits.bot };
+  f64 norm_x = (f64)screenX / m_window_width;
+  f64 norm_y = (f64)screenY / m_window_height;
+
+  f64 w_x = norm_x * (m_limits.end - m_limits.start) + m_limits.start;
+  f64 w_y = (1.0 - norm_y) * (m_limits.top - m_limits.bot) + m_limits.bot;
+
+  return { w_x, w_y };
 }
