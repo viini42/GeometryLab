@@ -1,5 +1,6 @@
 #include "object_drawer.hpp"
 
+#include "domain/model.hpp"
 #include "geometry/world_converter.hpp"
 
 #include <SFML/Graphics/CircleShape.hpp>
@@ -21,4 +22,14 @@ void ObjectDrawer::DrawLine(sf::RenderTarget& renderer, const World& world, cons
   sf::Vertex verts[] = { sf::Vertex{ { p1x, p1y }, sf::Color::White },
                          sf::Vertex{ { p2x, p2y }, sf::Color::White } };
   renderer.draw(verts, 2, sf::Lines);
+}
+
+void ObjectDrawer::DrawModel(sf::RenderTarget& renderer,
+                             const World& world,
+                             const Ptr<Model>& model)
+{
+  const auto& lines = model->GetLines();
+  std::ranges::for_each(lines, [&](const auto& l) { DrawLine(renderer, world, l); });
+  const auto& pts = model->GetPoints();
+  std::ranges::for_each(pts, [&](const auto& p) { DrawPoint(renderer, world, p); });
 }

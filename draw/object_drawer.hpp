@@ -3,8 +3,11 @@
 #include "geometry/line.hpp"
 #include "geometry/point.hpp"
 #include "geometry/world_converter.hpp"
+#include "utils/aliases.hpp"
 
 #include <SFML/Graphics/RenderTarget.hpp>
+
+class Model;
 
 class ObjectDrawer
 {
@@ -13,6 +16,8 @@ public:
   static void DrawPoint(sf::RenderTarget& renderer, const World& world, const Point& pt);
 
   static void DrawLine(sf::RenderTarget& renderer, const World& world, const Line& line);
+
+  static void DrawModel(sf::RenderTarget& renderer, const World& world, const Ptr<Model>& model);
 };
 
 #endif // OBJECT_DRAWER_HPP

@@ -91,7 +91,12 @@ add_library(DrawerLib STATIC
     geometry/line.cpp
     geometry/line.hpp
     draw/object_drawer.cpp
-    draw/object_drawer.hpp)
+    draw/object_drawer.hpp
+    domain/model.hpp
+    domain/model.cpp
+    io/model_loader.cpp
+    io/model_loader.hpp
+)
 target_include_directories(DrawerLib PUBLIC ${CMAKE_SOURCE_DIR})
 target_link_libraries(DrawerLib PUBLIC sfml-system sfml-network sfml-graphics sfml-window)
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
@@ -109,5 +114,6 @@ enable_testing()
 find_package(GTest CONFIG REQUIRED)
 add_executable(DrawerTests tests/tests.cpp)
 target_link_libraries(DrawerTests PRIVATE DrawerLib GTest::gtest GTest::gtest_main GTest::gmock GTest::gmock_main)
-
-#add_test(AllTestsInMain main)
+if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+  set_target_properties(DrawerTests PROPERTIES MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif()

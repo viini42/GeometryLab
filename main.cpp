@@ -1,11 +1,13 @@
+#include "domain/model.hpp"
 #include "draw/object_drawer.hpp"
 #include "geometry/world_converter.hpp"
+#include "io/model_loader.hpp"
+#include "utils/aliases.hpp"
 
 #include <SFML/Graphics.hpp>
 #include <cmath>
 #include <format>
 
-std::vector<Point> circles{};
 Line l_x{ Point{ 0, -1000 }, Point{ 0, 1000 } };
 Line l_y{ Point{ -1000, 0 }, Point{ 1000, 0 } };
 
@@ -32,24 +34,7 @@ int main()
   world.MoveVertically(-0.1);
   world.MoveHorizontally(-0.1);
 
-  // auto y_axis_bot = world.ConvertToScreen(0, -1);
-  // auto y_axis_top = world.ConvertToScreen(0, +1);
-  // auto x_axis_start = world.ConvertToScreen(-1, 0);
-  // auto x_axis_end = world.ConvertToScreen(+1, 0);
-  // sf::Vertex y_axis[]{
-  //   sf::Vertex(sf::Vector2f{ static_cast<float>(y_axis_bot.x), static_cast<float>(y_axis_bot.y)
-  //   },
-  //              sf::Color::Red),
-  //   sf::Vertex(sf::Vector2f{ static_cast<float>(y_axis_top.x), static_cast<float>(y_axis_top.y)
-  //   },
-  //              sf::Color::Red)
-  // };
-  // sf::Vertex x_axis[]{ sf::Vertex(sf::Vector2f{ static_cast<float>(x_axis_start.x),
-  //                                               static_cast<float>(x_axis_start.y) },
-  //                                 sf::Color::Blue),
-  //                      sf::Vertex(sf::Vector2f{ static_cast<float>(x_axis_end.x),
-  //                                               static_cast<float>(x_axis_end.y) },
-  //                                 sf::Color::Blue) };
+  Ptr<Model> model = ModelLoader::Read("assets/interlagos_pts.txt");
 
   // Main game loop
   bool bt_mid_pressed = false;
@@ -101,8 +86,8 @@ int main()
           pt_start_x = event.mouseButton.x;
           pt_start_y = event.mouseButton.y;
         }
-        auto pt_coords = world.ConvertToWorld(event.mouseButton.x, event.mouseButton.y);
-        circles.emplace_back(pt_coords.x, pt_coords.y);
+//        auto pt_coords = world.ConvertToWorld(event.mouseButton.x, event.mouseButton.y);
+//        circles.emplace_back(pt_coords.x, pt_coords.y);
         // circles.emplace_back(sf::Vector2f{ static_cast<float>(event.mouseButton.x),
         // static_cast<float>(event.mouseButton.y) });
       }
@@ -137,9 +122,10 @@ int main()
     //   window.draw(cs);
     // }
 
-    std::ranges::for_each(circles, [&](auto&& c) { ObjectDrawer::DrawPoint(window, world, c); });
+//    std::ranges::for_each(circles, [&](auto&& c) { ObjectDrawer::DrawPoint(window, world, c); });
     ObjectDrawer::DrawLine(window, world, l_x);
     ObjectDrawer::DrawLine(window, world, l_y);
+    ObjectDrawer::DrawModel(window, world, model);
 
     window.draw(text_coords);
     window.draw(text_zoom);
