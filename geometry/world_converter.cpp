@@ -1,5 +1,9 @@
 #include "world_converter.hpp"
 
+namespace {
+  constexpr auto ZOOM_INC = 0.05;
+}
+
 World::World(u32 windowWidth, u32 windowHeight) :
     m_window_width(windowWidth),
     m_window_height(windowHeight),
@@ -41,18 +45,12 @@ void World::MoveVertically(const f64 value)
 
 void World::ZoomOut()
 {
-  m_limits.start += -0.01;
-  m_limits.end += +0.01;
-  m_limits.bot += -0.01;
-  m_limits.top += +0.01;
+  m_limits.Increase(0.05);
 }
 
 void World::ZoomIn()
 {
-  m_limits.start -= -0.01;
-  m_limits.end -= +0.01;
-  m_limits.bot -= -0.01;
-  m_limits.top -= +0.01;
+  m_limits.Decrease(0.05);
 }
 
 sf::Vector2<f64> World::ConvertToWorld(i32 screenX, i32 screenY) const
