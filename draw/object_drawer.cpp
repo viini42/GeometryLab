@@ -1,7 +1,7 @@
 #include "object_drawer.hpp"
 
 #include "domain/model.hpp"
-#include "geometry/world_converter.hpp"
+#include "domain/geometry/world_converter.hpp"
 
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/VertexBuffer.hpp>

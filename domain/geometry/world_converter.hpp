@@ -1,7 +1,7 @@
 #ifndef WORLD_HPP
 #define WORLD_HPP
 
-#include "math/number_aliases.hpp"
+#include "domain/math/number_aliases.hpp"
 #include "point.hpp"
 
 #include <SFML/System/Vector2.hpp>

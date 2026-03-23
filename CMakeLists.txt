@@ -84,16 +84,16 @@ endif()
 find_package(SFML REQUIRED COMPONENTS Graphics Window)
 
 add_library(DrawerLib STATIC
-    geometry/world_converter.hpp
-    geometry/world_converter.cpp
-    geometry/point.cpp
-    geometry/point.hpp
-    geometry/line.cpp
-    geometry/line.hpp
+    domain/geometry/line.cpp
+    domain/geometry/line.hpp
+    domain/geometry/point.cpp
+    domain/geometry/point.hpp
+    domain/geometry/world_converter.cpp
+    domain/geometry/world_converter.hpp
+    domain/model.cpp
+    domain/model.hpp
     draw/object_drawer.cpp
     draw/object_drawer.hpp
-    domain/model.hpp
-    domain/model.cpp
     io/model_loader.cpp
     io/model_loader.hpp
 )

@@ -1,8 +1,8 @@
 #ifndef OBJECT_DRAWER_HPP
 #define OBJECT_DRAWER_HPP
-#include "geometry/line.hpp"
-#include "geometry/point.hpp"
-#include "geometry/world_converter.hpp"
+#include "domain/geometry/line.hpp"
+#include "domain/geometry/point.hpp"
+#include "domain/geometry/world_converter.hpp"
 #include "utils/aliases.hpp"
 
 #include <SFML/Graphics/RenderTarget.hpp>

@@ -1,7 +1,7 @@
 #ifndef POINT_HPP
 #define POINT_HPP
 
-#include "math/number_aliases.hpp"
+#include "domain/math/number_aliases.hpp"
 
 class Point
 {
