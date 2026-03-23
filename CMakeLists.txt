@@ -81,7 +81,7 @@ else()
   message(FATAL_ERROR "Unsupported compiler (CMAKE_CXX_COMPILER_ID = ${CMAKE_CXX_COMPILER_ID})")
 endif()
 
-find_package(SFML COMPONENTS system window graphics CONFIG REQUIRED)
+find_package(SFML REQUIRED COMPONENTS Graphics Window)
 
 add_library(DrawerLib STATIC
     geometry/world_converter.hpp
@@ -98,7 +98,7 @@ add_library(DrawerLib STATIC
     io/model_loader.hpp
 )
 target_include_directories(DrawerLib PUBLIC ${CMAKE_SOURCE_DIR})
-target_link_libraries(DrawerLib PUBLIC sfml-system sfml-network sfml-graphics sfml-window)
+target_link_libraries(DrawerLib PUBLIC SFML::Graphics SFML::Window)
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   set_target_properties(DrawerLib PROPERTIES MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif()

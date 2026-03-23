@@ -5,6 +5,8 @@
 #include "utils/aliases.hpp"
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Window/Event.hpp>
+#include <SFML/Window/Keyboard.hpp>
 #include <cmath>
 #include <format>
 
@@ -14,18 +16,17 @@ Line l_y{ Point{ -1000, 0 }, Point{ 1000, 0 } };
 int main()
 {
   // Create a window with the resolution of 800x600
-  sf::RenderWindow window(sf::VideoMode(800, 600), "SFML Window");
+  sf::RenderWindow window(sf::VideoMode({ 800, 600 }), "SFML Window");
 
   // Set the frame rate limit to 60 FPS
   window.setFramerateLimit(60);
 
   sf::Font font;
-  if (!font.loadFromFile("fonts/Inter-Regular.ttf"))
+  if (!font.openFromFile("fonts/Inter-Regular.ttf"))
   {
     return -1;
   }
-  sf::Text text_coords;
-  text_coords.setFont(font);
+  sf::Text text_coords{ font };
   text_coords.setCharacterSize(12);
   text_coords.setFillColor(sf::Color::White);
   sf::Text text_zoom = text_coords;
@@ -41,28 +42,28 @@ int main()
   int pt_start_x{}, pt_start_y{};
   while (window.isOpen())
   {
-    sf::Event event;
-
     // Handle events
-    while (window.pollEvent(event))
+    while (const auto event = window.pollEvent())
     {
-      if (event.type == sf::Event::Closed)
+      if (event->is<sf::Event::Closed>())
       {
         window.close(); // Close window if the user clicks the close button
       }
-      else if (event.type == sf::Event::MouseMoved)
+      else if (event->is<sf::Event::MouseMoved>())
       {
-        auto coords = world.ConvertToWorld(event.mouseMove.x, event.mouseMove.y);
+        const auto x = event->getIf<sf::Event::MouseMoved>()->position.x;
+        const auto y = event->getIf<sf::Event::MouseMoved>()->position.y;
+        auto coords = world.ConvertToWorld(x, y);
         text_coords.setString(std::format("{:6d}, {:6d}\n{:2.4f}, {:2.4f}\nPressing: {}",
-                                          event.mouseMove.x,
-                                          event.mouseMove.y,
+                                          x,
+                                          y,
                                           coords.x,
                                           coords.y,
                                           bt_mid_pressed));
         if (bt_mid_pressed)
         {
-          int end_x = event.mouseMove.x;
-          int end_y = event.mouseMove.y;
+          int end_x = x;
+          int end_y = y;
           auto p1 = world.ConvertToWorld(pt_start_x, pt_start_y);
           auto p2 = world.ConvertToWorld(end_x, end_y);
           world.MoveHorizontally(-(p2.x - p1.x));
@@ -71,41 +72,45 @@ int main()
           pt_start_y = end_y;
         }
       }
-      else if (event.type == sf::Event::MouseWheelScrolled)
+      else if (event->is<sf::Event::MouseWheelScrolled>())
       {
-        if (event.mouseWheelScroll.delta < 0)
+        if (event->getIf<sf::Event::MouseWheelScrolled>()->delta < 0)
           world.ZoomOut();
         else
           world.ZoomIn();
       }
-      else if (event.type == sf::Event::MouseButtonPressed)
+      else if (event->is<sf::Event::MouseButtonPressed>())
       {
-        if (!bt_mid_pressed && event.mouseButton.button == sf::Mouse::Button::Middle)
+        const auto pos = event->getIf<sf::Event::MouseButtonPressed>()->position;
+        const auto bt = event->getIf<sf::Event::MouseButtonPressed>()->button;
+        if (!bt_mid_pressed && bt == sf::Mouse::Button::Middle)
         {
           bt_mid_pressed = true;
-          pt_start_x = event.mouseButton.x;
-          pt_start_y = event.mouseButton.y;
+          pt_start_x = pos.x;
+          pt_start_y = pos.y;
         }
-//        auto pt_coords = world.ConvertToWorld(event.mouseButton.x, event.mouseButton.y);
-//        circles.emplace_back(pt_coords.x, pt_coords.y);
+        //        auto pt_coords = world.ConvertToWorld(event.mouseButton.x, event.mouseButton.y);
+        //        circles.emplace_back(pt_coords.x, pt_coords.y);
         // circles.emplace_back(sf::Vector2f{ static_cast<float>(event.mouseButton.x),
         // static_cast<float>(event.mouseButton.y) });
       }
-      else if (event.type == sf::Event::MouseButtonReleased)
+      else if (event->is<sf::Event::MouseButtonReleased>())
       {
-        if (bt_mid_pressed && event.mouseButton.button == sf::Mouse::Button::Middle)
+        if (bt_mid_pressed &&
+            event->getIf<sf::Event::MouseButtonReleased>()->button == sf::Mouse::Button::Middle)
           bt_mid_pressed = false;
       }
-      else if (event.type == sf::Event::KeyReleased)
+      else if (event->is<sf::Event::KeyReleased>())
       {
+        auto key = event->getIf<sf::Event::KeyReleased>()->code;
         constexpr auto STEP = 0.01;
-        if (event.key.code == sf::Keyboard::A)
+        if (key == sf::Keyboard::Key::A)
           world.MoveHorizontally(-STEP);
-        else if (event.key.code == sf::Keyboard::D)
+        else if (key == sf::Keyboard::Key::D)
           world.MoveHorizontally(+STEP);
-        else if (event.key.code == sf::Keyboard::W)
+        else if (key == sf::Keyboard::Key::W)
           world.MoveVertically(+STEP);
-        else if (event.key.code == sf::Keyboard::S)
+        else if (key == sf::Keyboard::Key::S)
           world.MoveVertically(-STEP);
       }
     }
@@ -122,7 +127,8 @@ int main()
     //   window.draw(cs);
     // }
 
-//    std::ranges::for_each(circles, [&](auto&& c) { ObjectDrawer::DrawPoint(window, world, c); });
+    //    std::ranges::for_each(circles, [&](auto&& c) { ObjectDrawer::DrawPoint(window, world, c);
+    //    });
     ObjectDrawer::DrawLine(window, world, l_x);
     ObjectDrawer::DrawLine(window, world, l_y);
     ObjectDrawer::DrawModel(window, world, model);

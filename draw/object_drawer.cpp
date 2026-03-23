@@ -5,13 +5,14 @@
 
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/VertexBuffer.hpp>
+#include <algorithm>
 
 void ObjectDrawer::DrawPoint(sf::RenderTarget& renderer, const World& world, const Point& pt)
 {
   auto [screen_x, screen_y] = world.ConvertToScreen(pt);
   constexpr auto radius = 2.0f;
   sf::CircleShape circle{ radius };
-  circle.setPosition(screen_x - radius, screen_y - radius);
+  circle.setPosition({ screen_x - radius, screen_y - radius });
   renderer.draw(circle);
 }
 
@@ -21,7 +22,7 @@ void ObjectDrawer::DrawLine(sf::RenderTarget& renderer, const World& world, cons
   auto [p2x, p2y] = world.ConvertToScreen(line.P2());
   sf::Vertex verts[] = { sf::Vertex{ { p1x, p1y }, sf::Color::White },
                          sf::Vertex{ { p2x, p2y }, sf::Color::White } };
-  renderer.draw(verts, 2, sf::Lines);
+  renderer.draw(verts, 2, sf::PrimitiveType::Lines);
 }
 
 void ObjectDrawer::DrawModel(sf::RenderTarget& renderer,
