@@ -94,8 +94,12 @@ add_library(DrawerLib STATIC
     domain/model.hpp
     draw/object_drawer.cpp
     draw/object_drawer.hpp
+    draw/canvas.cpp
+    draw/canvas.hpp
     io/model_loader.cpp
     io/model_loader.hpp
+    draw/window.cpp
+    draw/window.hpp
 )
 target_include_directories(DrawerLib PUBLIC ${CMAKE_SOURCE_DIR})
 target_link_libraries(DrawerLib PUBLIC SFML::Graphics SFML::Window)
@@ -103,7 +107,9 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   set_target_properties(DrawerLib PROPERTIES MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif()
 
-add_executable(Drawer main.cpp)
+add_executable(Drawer main.cpp
+    controllers/canvas_handler.cpp
+    controllers/canvas_handler.hpp)
 target_link_libraries(Drawer PRIVATE ProjectSetup DrawerLib)
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   target_compile_definitions(Drawer PRIVATE SFML_STATIC)
