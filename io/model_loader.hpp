@@ -1,7 +1,7 @@
 #ifndef DRAWER_MODELLOADER_HPP
 #define DRAWER_MODELLOADER_HPP
 
-#include "domain/model.hpp"
+#include "../model/scene.hpp"
 #include "utils/aliases.hpp"
 
 #include <filesystem>

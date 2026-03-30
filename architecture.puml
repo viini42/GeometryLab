@@ -1,0 +1,25 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+'stereotype Common
+stereotype App
+stereotype Model
+stereotype Geometry
+stereotype Renderer
+stereotype IO
+stereotype SFML
+
+App --> Renderer
+App --> Model
+Model --> Geometry
+Renderer --> Model
+App --> IO
+IO --> Model
+'Model --> Common
+'Geometry --> Common
+'Renderer --> Common
+'IO --> Common
+Renderer --> SFML
+
+
+@enduml

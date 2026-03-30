@@ -15,111 +15,60 @@ if(NOT DEFINED ${CMAKE_TOOLCHAIN_FILE})
   set(CMAKE_TOOLCHAIN_FILE ${CMAKE_SOURCE_DIR}/vendor/vcpkg/scripts/buildsystems/vcpkg.cmake)
 endif()
 
-project(Drawer CXX)
+project(GeometryLab CXX)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-add_library(ProjectSetup INTERFACE)
-
-message(STATUS "Setting up platform = ${CMAKE_SYSTEM_NAME}")
-if(CMAKE_SYSTEM_NAME STREQUAL Windows)
-  target_compile_definitions(ProjectSetup INTERFACE PLATFORM_WINDOWS)
-elseif(CMAKE_SYSTEM_NAME STREQUAL Linux)
-  target_compile_definitions(ProjectSetup INTERFACE PLATFORM_LINUX)
-else()
-  message(FATAL_ERROR "Unsupported platform")
-endif()
-
-message(STATUS "Setting up compiler flags = ${CMAKE_CXX_COMPILER_ID}:${CMAKE_CXX_COMPILER_FRONTEND_VARIANT}")
-if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-  target_compile_options(ProjectSetup INTERFACE
-      /Wall                        # Enable most common warnings
-      /W4                          # Set warning level 4 (highest warning level)
-      $<$<CONFIG:Release>:/WX>     # Treat warnings as errors
-  )
-elseif(CMAKE_CXX_COMPILER_ID STREQUAL GNU)
-  target_compile_options(ProjectSetup INTERFACE
-      -Wall                        # Enable most common warnings
-      -Wextra                      # Enable extra warnings
-      -Wpedantic                   # Issue all the warnings demanded by strict ISO C and ISO C++
-      $<$<CONFIG:Release>:-Werror> # Treat warnings as errors
-      -Wconversion                 # Warn for implicit conversions that may change the value
-      -Wsign-conversion            # Warn for signed-to-unsigned conversion
-      -Wunreachable-code           # Warn if the compiler detects code that will never be executed
-      -Wunused                     # Warn about variables or functions that are defined but never used
-      -Wunused-parameter           # Warn about unused function parameters
-      -Wunused-variable            # Warn about unused variables
-      -Wfloat-equal                # Warn if floating-point values are compared for equality
-      -Wshadow                     # Warn whenever a local variable shadows another local variable
-      -Wuninitialized              # Warn about uninitialized variables
-      -Wmaybe-uninitialized        # Warn about variables that may be uninitialized
-      -Wunused-label               # Warn when a label is declared but not used
-      -Wsuggest-override           # Warn if a function could be marked override
-      -Wnon-virtual-dtor           # Warn when a class has a non-virtual destructor
-  )
-elseif(CMAKE_CXX_COMPILER_ID STREQUAL Clang)
-  if(CMAKE_CXX_COMPILER_FRONTEND_VARIANT STREQUAL "MSVC" OR CMAKE_CXX_COMPILER_FRONTEND_VARIANT STREQUAL "GNU")
-    target_compile_options(ProjectSetup INTERFACE
-        -Wall                        # Enable most warning messages
-        -Wextra                      # Enable some extra warning messages
-        -Wpedantic                   # Warn about non-portable constructs
-        $<$<CONFIG:Release>:-Werror> # Treat warnings as errors
-        -Wshadow                     # Warn whenever a local variable shadows another local variable
-        -Wconversion                 # Warn for implicit conversions that may change the value
-        -Wsign-conversion            # Warn for implicit conversions that may change the sign
-        -Wformat=2                   # Check printf/scanf format strings
-        -Wundef                      # Warn if an undefined identifier is evaluated in an #if directive
-        -Wunreachable-code           # Warn if code will never be executed
-        -Wunused                     # Warn about unused functions, variables, etc.
-    )
-  else()
-    message(FATAL_ERROR "Unsupported CLANG frontend (CMAKE_CXX_COMPILER_FRONTEND_VARIANT = ${CMAKE_CXX_COMPILER_FRONTEND_VARIANT})")
-  endif()
-else()
-  message(FATAL_ERROR "Unsupported compiler (CMAKE_CXX_COMPILER_ID = ${CMAKE_CXX_COMPILER_ID})")
-endif()
-
-find_package(SFML REQUIRED COMPONENTS Graphics Window)
-
-add_library(DrawerLib STATIC
-    domain/geometry/line.cpp
-    domain/geometry/line.hpp
-    domain/geometry/point.cpp
-    domain/geometry/point.hpp
-    domain/geometry/world_converter.cpp
-    domain/geometry/world_converter.hpp
-    domain/model.cpp
-    domain/model.hpp
-    draw/object_drawer.cpp
-    draw/object_drawer.hpp
-    draw/canvas.cpp
-    draw/canvas.hpp
-    io/model_loader.cpp
-    io/model_loader.hpp
-    draw/window.cpp
-    draw/window.hpp
-)
-target_include_directories(DrawerLib PUBLIC ${CMAKE_SOURCE_DIR})
-target_link_libraries(DrawerLib PUBLIC SFML::Graphics SFML::Window)
-if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-  set_target_properties(DrawerLib PROPERTIES MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-endif()
-
-add_executable(Drawer main.cpp
-    controllers/canvas_handler.cpp
-    controllers/canvas_handler.hpp)
-target_link_libraries(Drawer PRIVATE ProjectSetup DrawerLib)
-if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-  target_compile_definitions(Drawer PRIVATE SFML_STATIC)
-  set_target_properties(Drawer PROPERTIES MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-endif()
-enable_testing()
-
-find_package(GTest CONFIG REQUIRED)
-add_executable(DrawerTests tests/tests.cpp)
-target_link_libraries(DrawerTests PRIVATE DrawerLib GTest::gtest GTest::gtest_main GTest::gmock GTest::gmock_main)
-if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-  set_target_properties(DrawerTests PROPERTIES MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-endif()
+include(CompilerOptions.cmake)
+add_subdirectory(app)
+add_subdirectory(geometry)
+add_subdirectory(model)
+add_subdirectory(renderer)
+#
+#
+#find_package(SFML REQUIRED COMPONENTS Graphics Window)
+#
+#add_library(DrawerLib STATIC
+#    domain/geometry/line.cpp
+#    domain/geometry/line.hpp
+#    domain/geometry/point.cpp
+#    domain/geometry/point.hpp
+#    domain/geometry/world_converter.cpp
+#    domain/geometry/world_converter.hpp
+#    domain/model.cpp
+#    domain/model.hpp
+#    draw/object_drawer.cpp
+#    draw/object_drawer.hpp
+#    draw/canvas.cpp
+#    draw/canvas.hpp
+#    io/model_loader.cpp
+#    io/model_loader.hpp
+#    draw/window.cpp
+#    draw/window.hpp
+#)
+#target_include_directories(DrawerLib PUBLIC ${CMAKE_SOURCE_DIR})
+#target_link_libraries(DrawerLib PUBLIC SFML::Graphics SFML::Window)
+#if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+#  set_target_properties(DrawerLib PROPERTIES MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+#endif()
+#
+#add_executable(Drawer main.cpp
+#    controllers/canvas_handler.cpp
+#    controllers/canvas_handler.hpp
+#    app/application.cpp
+#    app/application.hpp)
+#target_link_libraries(Drawer PRIVATE ProjectSetup DrawerLib)
+#if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+#  target_compile_definitions(Drawer PRIVATE SFML_STATIC)
+#  set_target_properties(Drawer PROPERTIES MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+#endif()
+#enable_testing()
+#
+#find_package(GTest CONFIG REQUIRED)
+#add_executable(DrawerTests tests/tests.cpp)
+#target_link_libraries(DrawerTests PRIVATE DrawerLib GTest::gtest GTest::gtest_main GTest::gmock GTest::gmock_main)
+#if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+#  set_target_properties(DrawerTests PROPERTIES MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+#endif()
